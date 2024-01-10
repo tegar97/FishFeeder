@@ -1,4 +1,4 @@
-package com.fishfeeder
+package com.fishfeeder.ui.screens.mainActivity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,9 +9,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.fishfeeder.ui.route.FishFeeder
 import com.fishfeeder.ui.theme.FishFeederTheme
+import com.fishfeeder.ui.theme.spacing
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,30 +22,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FishFeederTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                      FishFeeder()
-                }
+                
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FishFeederTheme {
-        Greeting("Android")
     }
 }
