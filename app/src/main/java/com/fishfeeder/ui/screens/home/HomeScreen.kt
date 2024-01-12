@@ -31,12 +31,14 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    taskTitle: String,
-    timer: String,
-    histories: List<History>,
     itemsNavigation: List<BottomNavigationItem>,
     onNavigationItemClick: (Int) -> Unit
 ) {
+    val histories = listOf(
+        History(id = 1, title = "Makan siang", hour = "2", status = true),
+        History(id = 2, title = "Makan malam", hour = "19", status = false),
+        History(id = 3, title = "Makan pagi", hour = "7", status = true),
+    )
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -48,8 +50,8 @@ fun HomeScreen(
         )
         HomeComponentTimer(
             modifier = modifier,
-            taskTitle = taskTitle,
-            timer = timer
+            taskTitle = "Makan Siang",
+            timer = "01:00:00",
         )
         Spacer(
             modifier = modifier.height(MaterialTheme.spacing.medium)
@@ -146,9 +148,6 @@ fun HomScreenPreview() {
             BottomNavigationItem(R.drawable.baseline_restart_alt_24)
         )
         HomeScreen(
-            taskTitle = "Makan Siang",
-            timer = "02:00:00",
-            histories = histories,
             itemsNavigation = items,
             onNavigationItemClick = {}
         )
