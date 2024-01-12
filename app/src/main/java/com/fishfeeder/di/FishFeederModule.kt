@@ -1,4 +1,4 @@
-package com.fishfeeder
+package com.fishfeeder.di
 
 import android.content.Context
 import androidx.room.Room
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class FishFeederModule {
+object FishFeederModule {
 
 
     @Singleton

@@ -11,7 +11,6 @@ data  class HistoryEntity (
     @ColumnInfo(name = "id")
     val id: Long = 0,
 
-
     @ColumnInfo(name = "title")
     val title: String,
 

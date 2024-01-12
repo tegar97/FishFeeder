@@ -1,8 +1,9 @@
 package com.fishfeeder.ui.theme
 
+import android.graphics.Color.rgb
 import androidx.compose.ui.graphics.Color
 
-val LightBlue = Color(0xff4CC7A1)
+val LightGreen = Color(0xFF4CC7A1)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
@@ -20,3 +21,6 @@ val neutral60 = Color(0XFF555555)
 val neutral70 = Color(0XFF2B2B2B)
 val neutral80 = Color(0XFF1D1D1D)
 val neutral90 = Color(0XFF000000)
+
+val green10 = Color(0xFF4CC7A1)
+val red60 = Color(0xFFA22231)

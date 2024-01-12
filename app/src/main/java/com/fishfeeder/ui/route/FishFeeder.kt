@@ -27,7 +27,7 @@ fun FishFeeder(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Route.Home.route) {
-                HomeScreen()
+//                HomeScreen()
             }
         }
     }
