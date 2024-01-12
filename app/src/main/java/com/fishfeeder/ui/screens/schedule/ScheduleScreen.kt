@@ -25,12 +25,29 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    schedules: List<Schedule>,
-    event: (ScheduleEvent) -> Unit,
     itemsNavigation: List<BottomNavigationItem>,
     onNavigationItemClick: (Int) -> Unit,
     onBackClick: () -> Unit
 ) {
+
+    val schedules = listOf(
+        Schedule(
+            id = 1L,
+            title = "Makan Pagi",
+            hour = "2"
+        ),
+        Schedule(
+            id = 2L,
+            title = "Makan Siang",
+            hour = "2"
+        ),
+        Schedule(
+            id = 3L,
+            title = "Makan Malam",
+            hour = "2"
+        ),
+    )
+
     val switches = remember { mutableStateMapOf<Long, Boolean>() }
 
     Column(
@@ -147,8 +164,7 @@ fun ScheduleScreenPreview() {
 
     FishFeederTheme {
         ScheduleScreen(
-            schedules = schedules,
-            event = {},
+
             itemsNavigation = items,
             onNavigationItemClick = {},
             onBackClick = {}
