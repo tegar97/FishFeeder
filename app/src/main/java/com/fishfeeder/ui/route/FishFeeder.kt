@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fishfeeder.R
 import com.fishfeeder.ui.screens.adding.AddingScreen
+import com.fishfeeder.ui.screens.classifyImage.ClassifyImageScreen
 import com.fishfeeder.ui.screens.home.HomeScreen
 import com.fishfeeder.ui.screens.navigator.component.BottomNavigationItem
 import com.fishfeeder.ui.screens.schedule.ScheduleScreen
@@ -34,7 +35,11 @@ fun FishFeeder(
                 HomeScreen(
                     itemsNavigation = AppBarAction.HomeAppBar,
                     onNavigationItemClick = {it ->
-                        navController.navigate(Route.Schedule.route)
+
+                        when (it) {
+                            0 -> navController.navigate(Route.ClassifyImage.route)
+                            else -> navController.navigate(Route.Schedule.route)
+                        }
 
                     }
                 )
@@ -57,6 +62,14 @@ fun FishFeeder(
             composable(Route.Add.route) {
                 AddingScreen(
 
+                    onBackClick = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+
+            composable(Route.ClassifyImage.route) {
+                ClassifyImageScreen(
                     onBackClick = {
                         navController.navigateUp()
                     }
