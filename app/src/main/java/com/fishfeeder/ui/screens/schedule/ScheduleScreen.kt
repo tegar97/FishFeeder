@@ -22,7 +22,8 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    schedules: List<Schedule>
+    schedules: List<Schedule> = emptyList(),
+    onEvent: (ScheduleEvent) -> Unit
 ) {
     val switches = remember { mutableStateMapOf<Long, Boolean>() }
 
@@ -35,6 +36,7 @@ fun ScheduleScreen(
             schedules = schedules,
             onCheckedClick = { value, key ->
                 switches[key] = value
+                onEvent(ScheduleEvent.OnChangeSchedule(id = key.toInt(), isActive = value))
             },
             switchState = switches
         )
@@ -128,7 +130,10 @@ fun ScheduleScreenPreview() {
 
     FishFeederTheme {
         ScheduleScreen(
-            schedules = schedules
+            schedules = schedules,
+            onEvent = {
+
+            }
         )
     }
 }

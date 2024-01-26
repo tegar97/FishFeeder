@@ -2,7 +2,5 @@ package com.fishfeeder.ui.screens.schedule
 
 
 sealed class ScheduleEvent {
-    fun onEvent() {
-
-    }
+    data class OnChangeSchedule(val id : Int, val isActive : Boolean) : ScheduleEvent()
 }

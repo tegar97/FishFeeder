@@ -8,6 +8,10 @@ import javax.inject.Inject
 class AddingViewModel @Inject constructor() : ViewModel() {
 
     fun onEvent(event : AddingEvent) {
+        when (event) {
+            is AddingEvent.SaveSchedule -> {
 
+            }
+        }
     }
 }

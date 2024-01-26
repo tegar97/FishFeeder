@@ -13,4 +13,6 @@ sealed class Route(
     object AddingScheduleScreen : Route(route = "addingScheduleScreen")
 
     object FishFeederNavigation : Route(route = "fishFeederNavigation")
+
+    object ClassifyImageScreen : Route(route = "classifyImageScreen")
 }

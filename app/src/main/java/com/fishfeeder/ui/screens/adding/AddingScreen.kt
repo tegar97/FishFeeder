@@ -23,16 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.fishfeeder.ui.screens.adding.component.TimePickerDialog
-import com.fishfeeder.ui.screens.navigator.component.FishFeederTopBar
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.spacing
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddingScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    onEvent: (AddingEvent) -> Unit
 ) {
     val state = rememberTimePickerState()
     var showTimePicker by remember { mutableStateOf(false) }
@@ -45,7 +46,8 @@ fun AddingScreen(
                 cal.set(Calendar.HOUR_OF_DAY, state.hour)
                 cal.set(Calendar.MINUTE, state.minute)
                 cal.isLenient = false
-                "${cal.time}"
+                val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                simpleDateFormat.format(cal.time)
             } else {
                 "Choose Time"
             }
@@ -79,7 +81,14 @@ fun AddingScreen(
             Button(
                 modifier = modifier
                     .fillMaxWidth(),
-                onClick = {}
+                onClick = {
+                    onEvent(
+                        AddingEvent.SaveSchedule(
+                            timeResult = timeResult,
+                            nameSchedule = titleSchedule
+                        )
+                    )
+                }
             ) {
                 Text("Simpan")
             }
@@ -147,7 +156,7 @@ fun AddingComponentForm(
 fun AddingScreenPreview() {
     FishFeederTheme {
         AddingScreen(
-            onBackClick = {
+            onEvent = {
 
             }
         )

@@ -31,7 +31,7 @@ fun FishFeeder(
             startDestination = Route.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Route.Home.route) {
+            /*composable(Route.Home.route) {
                 HomeScreen(
                     itemsNavigation = AppBarAction.HomeAppBar,
                     onNavigationItemClick = {it ->
@@ -45,9 +45,9 @@ fun FishFeeder(
                 )
 
 
-            }
+            }*/
 
-            composable(Route.Schedule.route) {
+            /*composable(Route.Schedule.route) {
                 ScheduleScreen(
                     itemsNavigation = AppBarAction.ScheduleAppBar,
                     onNavigationItemClick = {
@@ -57,24 +57,24 @@ fun FishFeeder(
                         navController.navigateUp()
                     }
                 )
-            }
+            }*/
 
-            composable(Route.Add.route) {
+            /*composable(Route.Add.route) {
                 AddingScreen(
 
                     onBackClick = {
                         navController.navigateUp()
                     }
                 )
-            }
+            }*/
 
-            composable(Route.ClassifyImage.route) {
+            /*composable(Route.ClassifyImage.route) {
                 ClassifyImageScreen(
                     onBackClick = {
                         navController.navigateUp()
                     }
                 )
-            }
+            }*/
         }
     }
 

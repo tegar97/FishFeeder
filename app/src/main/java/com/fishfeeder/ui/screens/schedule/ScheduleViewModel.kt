@@ -6,5 +6,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor() : ViewModel() {
+    fun onEvent(scheduleEvent: ScheduleEvent) {
+        when (scheduleEvent) {
+            is ScheduleEvent.OnChangeSchedule -> {
 
+            }
+        }
+    }
 }

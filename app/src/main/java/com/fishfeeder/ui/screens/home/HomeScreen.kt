@@ -31,7 +31,6 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigationItemClick: (Int) -> Unit,
     histories: List<History> = emptyList(),
     onEvent: (HomeEvent) -> Unit
 ) {
@@ -107,7 +106,7 @@ fun HomeComponentHistories(
             .padding(MaterialTheme.spacing.small),
     ) {
         Text(
-            text = "History",
+            text = "All Schedule",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight(600)
             )
@@ -135,7 +134,6 @@ fun HomScreenPreview() {
             History(id = 3, title = "Makan pagi", hour = "7", status = true),
         )
         HomeScreen(
-            onNavigationItemClick = {},
             onEvent = {
 
             },
