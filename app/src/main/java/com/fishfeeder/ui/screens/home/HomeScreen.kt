@@ -31,23 +31,14 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    itemsNavigation: List<BottomNavigationItem>,
-    onNavigationItemClick: (Int) -> Unit
+    onNavigationItemClick: (Int) -> Unit,
+    histories: List<History> = emptyList(),
+    onEvent: (HomeEvent) -> Unit
 ) {
-    val histories = listOf(
-        History(id = 1, title = "Makan siang", hour = "2", status = true),
-        History(id = 2, title = "Makan malam", hour = "19", status = false),
-        History(id = 3, title = "Makan pagi", hour = "7", status = true),
-    )
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
-        FishFeederTopBar(
-            title = "FishFeeder",
-            items = itemsNavigation,
-            onItemClick = onNavigationItemClick
-        )
         HomeComponentTimer(
             modifier = modifier,
             taskTitle = "Makan Siang",
@@ -143,13 +134,12 @@ fun HomScreenPreview() {
             History(id = 2, title = "Makan malam", hour = "19", status = false),
             History(id = 3, title = "Makan pagi", hour = "7", status = true),
         )
-        val items = listOf(
-            BottomNavigationItem(R.drawable.baseline_alarm_on_24),
-            BottomNavigationItem(R.drawable.baseline_restart_alt_24)
-        )
         HomeScreen(
-            itemsNavigation = items,
-            onNavigationItemClick = {}
+            onNavigationItemClick = {},
+            onEvent = {
+
+            },
+            histories = histories
         )
     }
 }

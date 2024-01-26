@@ -14,10 +14,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.fishfeeder.R
 import com.fishfeeder.domain.model.Schedule
-import com.fishfeeder.ui.screens.navigator.component.BottomNavigationItem
-import com.fishfeeder.ui.screens.navigator.component.FishFeederTopBar
 import com.fishfeeder.ui.screens.schedule.component.ScheduleItem
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.spacing
@@ -25,42 +22,13 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    itemsNavigation: List<BottomNavigationItem>,
-    onNavigationItemClick: (Int) -> Unit,
-    onBackClick: () -> Unit
+    schedules: List<Schedule>
 ) {
-
-    val schedules = listOf(
-        Schedule(
-            id = 1L,
-            title = "Makan Pagi",
-            hour = "2"
-        ),
-        Schedule(
-            id = 2L,
-            title = "Makan Siang",
-            hour = "2"
-        ),
-        Schedule(
-            id = 3L,
-            title = "Makan Malam",
-            hour = "2"
-        ),
-    )
-
     val switches = remember { mutableStateMapOf<Long, Boolean>() }
 
     Column(
         modifier = modifier
     ) {
-        FishFeederTopBar(
-            title = "Jadwal Makan",
-            items = itemsNavigation,
-            isCenteredTitle = true,
-            hasBackButton = true,
-            onItemClick = onNavigationItemClick,
-            onBackClick = onBackClick
-        )
         ScheduleComponentSchedules(
             modifier = modifier
                 .padding(MaterialTheme.spacing.small),
@@ -140,10 +108,6 @@ fun ScheduleComponentSchedulesPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ScheduleScreenPreview() {
-    val items = listOf(
-        BottomNavigationItem(R.drawable.baseline_add_24)
-    )
-
     val schedules = listOf(
         Schedule(
             id = 1L,
@@ -164,10 +128,7 @@ fun ScheduleScreenPreview() {
 
     FishFeederTheme {
         ScheduleScreen(
-
-            itemsNavigation = items,
-            onNavigationItemClick = {},
-            onBackClick = {}
+            schedules = schedules
         )
     }
 }

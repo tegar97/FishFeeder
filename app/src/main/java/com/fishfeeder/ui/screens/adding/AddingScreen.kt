@@ -55,12 +55,6 @@ fun AddingScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        FishFeederTopBar(
-            title = "Jadwal Makan",
-            hasBackButton = true,
-            isCenteredTitle = true,
-            onBackClick = onBackClick
-        )
         Column(
             modifier = modifier
                 .padding(MaterialTheme.spacing.small)
