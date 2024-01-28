@@ -19,6 +19,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.green10
 import com.fishfeeder.ui.theme.poppinsFamily
 import com.fishfeeder.ui.theme.red60
@@ -26,7 +27,7 @@ import com.fishfeeder.ui.theme.spacing
 
 @Composable
 fun HistoryCard(
-    success: Boolean,
+    title: String,
     time: String,
     modifier: Modifier = Modifier
 ) {
@@ -37,28 +38,7 @@ fun HistoryCard(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.Start
     ) {
-        Text(text = buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = poppinsFamily,
-                    fontSize = 14.sp
-                )
-            ) {
-                append("Status : ")
-            }
-            withStyle(
-                style = SpanStyle(
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = poppinsFamily,
-                    fontSize = 14.sp,
-                    color = if (success) green10 else red60
-                )
-            ) {
-                if (success) append("Berhasil") else append("Gagal")
-            }
-
-        })
+        Text(text = title)
         Spacer(modifier = modifier.height(10.dp))
         Text(text = buildAnnotatedString {
             withStyle(
@@ -73,7 +53,7 @@ fun HistoryCard(
 
             withStyle(
                 style = SpanStyle(
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight(700),
                     fontFamily = poppinsFamily,
                     fontSize = 14.sp
                 )
@@ -84,12 +64,12 @@ fun HistoryCard(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ScheduleCardPrev() {
     MaterialTheme {
-        Surface {
-            HistoryCard(success = false, "3 Jam yang lalu")
+        FishFeederTheme {
+            HistoryCard(title = "Makan Mukbang", "15:00")
         }
     }
 }

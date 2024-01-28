@@ -20,8 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.fishfeeder.R
 import com.fishfeeder.ui.screens.adding.component.TimePickerDialog
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.spacing
@@ -35,6 +37,8 @@ fun AddingScreen(
     modifier: Modifier = Modifier,
     onEvent: (AddingEvent) -> Unit
 ) {
+    val labelChooseTime = stringResource(R.string.label_adding_screen_choose_time)
+
     val state = rememberTimePickerState()
     var showTimePicker by remember { mutableStateOf(false) }
     var isChooses by remember { mutableStateOf(false) }
@@ -49,49 +53,46 @@ fun AddingScreen(
                 val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                 simpleDateFormat.format(cal.time)
             } else {
-                "Choose Time"
+                labelChooseTime
             }
         }
     }
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .padding(MaterialTheme.spacing.small)
     ) {
-        Column(
-            modifier = modifier
-                .padding(MaterialTheme.spacing.small)
-        ) {
-            AddingComponentForm(
-                titleSchedule = titleSchedule,
-                showTimePicker = showTimePicker,
-                timeResult = timeResult,
-                timeState = state,
-                onTimePickerClick = {
-                    showTimePicker = !showTimePicker
-                },
-                onTimePickerChoose = {
-                    isChooses = true
-                    showTimePicker = !showTimePicker
-                },
-                onTitleChange = {
-                    titleSchedule = it
-                }
-            )
-            Spacer(modifier = modifier.height(MaterialTheme.spacing.small))
-            Button(
-                modifier = modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    onEvent(
-                        AddingEvent.SaveSchedule(
-                            timeResult = timeResult,
-                            nameSchedule = titleSchedule
-                        )
-                    )
-                }
-            ) {
-                Text("Simpan")
+        AddingComponentForm(
+            titleSchedule = titleSchedule,
+            showTimePicker = showTimePicker,
+            timeResult = timeResult,
+            timeState = state,
+            onTimePickerClick = {
+                showTimePicker = !showTimePicker
+            },
+            onTimePickerChoose = {
+                isChooses = true
+                showTimePicker = !showTimePicker
+            },
+            onTitleChange = {
+                titleSchedule = it
             }
+        )
+        Spacer(modifier = modifier.height(MaterialTheme.spacing.small))
+        Button(
+            modifier = modifier
+                .fillMaxWidth(),
+            onClick = {
+                onEvent(
+                    AddingEvent.SaveSchedule(
+                        timeResult = timeResult,
+                        nameSchedule = titleSchedule
+                    )
+                )
+            }
+        ) {
+            Text(stringResource(R.string.label_adding_screen_save))
         }
     }
 }
@@ -110,36 +111,36 @@ fun AddingComponentForm(
 ) {
     Column {
         Text(
-            text = "List Jadwal Makan Ikan",
+            text = stringResource(R.string.title_screen_adding),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight(600)
             )
         )
         Spacer(modifier = modifier.height(MaterialTheme.spacing.medium))
         Text(
-            text = "Nama Jadwal",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight(500)
+            text = stringResource(R.string.label_sceen_adding_name_schedule),
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight(400)
             )
         )
-        Spacer(modifier = modifier.height(MaterialTheme.spacing.medium))
+        Spacer(modifier = modifier.height(MaterialTheme.spacing.small))
         OutlinedTextField(
             modifier = modifier
                 .fillMaxWidth(),
             value = titleSchedule,
             onValueChange = onTitleChange,
             placeholder = {
-                Text(text = "Contoh Makan Pagi")
+                Text(text = stringResource(R.string.placeholder_name_schedule))
             }
         )
         Spacer(modifier = modifier.height(MaterialTheme.spacing.medium))
         Text(
-            text = "Waktu",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight(500)
+            text = stringResource(R.string.label_screen_adding_time_schedule),
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight(400)
             )
         )
-        Spacer(modifier = modifier.height(MaterialTheme.spacing.medium))
+        Spacer(modifier = modifier.height(MaterialTheme.spacing.small))
         TimePickerDialog(
             timeResult = timeResult,
             stateTime = timeState,

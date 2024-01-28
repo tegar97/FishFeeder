@@ -1,5 +1,6 @@
 package com.fishfeeder.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.fishfeeder.R
 import com.fishfeeder.domain.model.History
 import com.fishfeeder.ui.screens.home.components.HistoryCard
-import com.fishfeeder.ui.screens.navigator.component.BottomNavigationItem
-import com.fishfeeder.ui.screens.navigator.component.FishFeederTopBar
+import com.fishfeeder.ui.screens.home.components.HomeTurbidityAlert
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.neutral60
 import com.fishfeeder.ui.theme.spacing
@@ -39,13 +40,17 @@ fun HomeScreen(
             .fillMaxSize()
     ) {
         HomeComponentTimer(
-            modifier = modifier,
+            modifier = modifier
+                .clickable {
+                    onEvent(HomeEvent.CallServo)
+                },
             taskTitle = "Makan Siang",
             timer = "01:00:00",
         )
         Spacer(
-            modifier = modifier.height(MaterialTheme.spacing.medium)
+            modifier = modifier.height(MaterialTheme.spacing.small)
         )
+        HomeTurbidityAlert(isGood = false, ntuValue = "999")
         HomeComponentHistories(modifier = modifier, histories = histories)
     }
 }
@@ -63,7 +68,7 @@ fun HomeComponentTimer(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Makan Selanjutnya",
+            text = stringResource(R.string.header_screen_home_next_schedule),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight(500)
             )
@@ -114,8 +119,8 @@ fun HomeComponentHistories(
         LazyColumn {
             items(items = histories, key = { it.id }) {
                 HistoryCard(
-                    success = it.status,
-                    time = "${it.hour} jam yang lalu"
+                    title = it.title,
+                    time = it.hour
                 )
             }
         }
@@ -129,9 +134,9 @@ fun HomeComponentHistories(
 fun HomScreenPreview() {
     FishFeederTheme {
         val histories = listOf(
-            History(id = 1, title = "Makan siang", hour = "2", status = true),
-            History(id = 2, title = "Makan malam", hour = "19", status = false),
-            History(id = 3, title = "Makan pagi", hour = "7", status = true),
+            History(id = 1, title = "Makan siang", hour = "02:00"),
+            History(id = 2, title = "Makan malam", hour = "19:00"),
+            History(id = 3, title = "Makan pagi", hour = "17:00"),
         )
         HomeScreen(
             onEvent = {
@@ -158,9 +163,9 @@ fun HomeComponentTimerPreview() {
 fun HomeComponentHistoriesPreview() {
     FishFeederTheme {
         val histories = listOf(
-            History(id = 1, title = "Makan siang", hour = "2", status = true),
-            History(id = 2, title = "Makan malam", hour = "19", status = false),
-            History(id = 3, title = "Makan pagi", hour = "7", status = true),
+            History(id = 1, title = "Makan siang", hour = "02:00"),
+            History(id = 2, title = "Makan malam", hour = "19:00"),
+            History(id = 3, title = "Makan pagi", hour = "17:00"),
         )
         HomeComponentHistories(histories = histories)
     }

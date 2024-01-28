@@ -13,7 +13,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import com.fishfeeder.R
 import com.fishfeeder.domain.model.History
 import com.fishfeeder.domain.model.Schedule
@@ -23,10 +22,12 @@ import com.fishfeeder.ui.screens.classifyImage.ClassifyImageScreen
 import com.fishfeeder.ui.screens.classifyImage.ClassifyImageViewModel
 import com.fishfeeder.ui.screens.home.HomeScreen
 import com.fishfeeder.ui.screens.home.HomeViewModel
-import com.fishfeeder.ui.screens.navigator.component.BottomNavigationItem
-import com.fishfeeder.ui.screens.navigator.component.FishFeederTopBar
+import com.fishfeeder.ui.screens.navigator.BottomNavigationItem
+import com.fishfeeder.ui.screens.navigator.FishFeederTopBar
 import com.fishfeeder.ui.screens.schedule.ScheduleScreen
 import com.fishfeeder.ui.screens.schedule.ScheduleViewModel
+import com.fishfeeder.ui.screens.turbidity.TurbidityScreen
+import com.fishfeeder.ui.screens.turbidity.TurbidityViewModel
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -39,12 +40,13 @@ fun NavGraph(
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             when (currentRoute) {
                 Route.HomeScreen.route -> {
                     val items = listOf(
                         BottomNavigationItem(R.drawable.baseline_alarm_on_24),
-                        BottomNavigationItem(R.drawable.baseline_restart_alt_24)
+                        BottomNavigationItem(R.drawable.baseline_water_drop_24)
                     )
                     FishFeederTopBar(
                         title = "FishFeeder",
@@ -52,7 +54,7 @@ fun NavGraph(
                         onItemClick = {
                             when (it) {
                                 0 -> navController.navigate(Route.ListScheduleScreen.route)
-//                                1 -> navController.navigate(Route.)
+                                1 -> navController.navigate(Route.TurbidityScreen.route)
                             }
                         }
                     )
@@ -98,6 +100,17 @@ fun NavGraph(
                         }
                     )
                 }
+
+                Route.TurbidityScreen.route -> {
+                    FishFeederTopBar(
+                        title = "Batas Keruh Ikan",
+                        hasBackButton = true,
+                        isCenteredTitle = true,
+                        onBackClick = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -109,9 +122,9 @@ fun NavGraph(
             composable(route = Route.HomeScreen.route) {
                 val viewModel: HomeViewModel = hiltViewModel()
                 val histories = listOf(
-                    History(id = 1, title = "Makan siang", hour = "2", status = true),
-                    History(id = 2, title = "Makan malam", hour = "19", status = false),
-                    History(id = 3, title = "Makan pagi", hour = "7", status = true),
+                    History(id = 1, title = "Makan siang", hour = "02:00"),
+                    History(id = 2, title = "Makan malam", hour = "19:00"),
+                    History(id = 3, title = "Makan pagi", hour = "17:00"),
                 )
                 HomeScreen(
                     histories = histories,
@@ -150,6 +163,10 @@ fun NavGraph(
             composable(route = Route.ClassifyImageScreen.route){
                 val viewModel: ClassifyImageViewModel = hiltViewModel()
                 ClassifyImageScreen()
+            }
+            composable(route = Route.TurbidityScreen.route) {
+                val viewModel: TurbidityViewModel = hiltViewModel()
+                TurbidityScreen(onEvent = viewModel::onEvent)
             }
         }
     }

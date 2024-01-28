@@ -12,8 +12,10 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.fishfeeder.R
 import com.fishfeeder.domain.model.Schedule
 import com.fishfeeder.ui.screens.schedule.component.ScheduleItem
 import com.fishfeeder.ui.theme.FishFeederTheme
@@ -55,7 +57,7 @@ fun ScheduleComponentSchedules(
             .fillMaxSize()
     ) {
         Text(
-            text = "List Jadwal Makan Ikan",
+            text = stringResource(R.string.title_screen_schedule),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight(600)
             )

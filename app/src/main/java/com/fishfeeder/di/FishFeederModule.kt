@@ -1,5 +1,6 @@
 package com.fishfeeder.di
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.fishfeeder.data.local.dao.HistoryDao
@@ -23,7 +24,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object FishFeederModule {
-
 
     @Singleton
     @Provides
@@ -97,4 +97,8 @@ object FishFeederModule {
     @Singleton
     fun mlApiService(@MlApi retrofit : Retrofit) : MlApiService = retrofit.create(MlApiService::class.java)
 
+    @Provides
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
 }

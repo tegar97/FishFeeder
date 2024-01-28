@@ -6,13 +6,15 @@ sealed class Route(
     val route: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
-    object HomeScreen : Route(route = "homeScreen")
+    data object HomeScreen : Route(route = "homeScreen")
 
-    object ListScheduleScreen : Route(route = "listScheduleScreen")
+    data object ListScheduleScreen : Route(route = "listScheduleScreen")
 
-    object AddingScheduleScreen : Route(route = "addingScheduleScreen")
+    data object AddingScheduleScreen : Route(route = "addingScheduleScreen")
 
-    object FishFeederNavigation : Route(route = "fishFeederNavigation")
+    data object FishFeederNavigation : Route(route = "fishFeederNavigation")
 
-    object ClassifyImageScreen : Route(route = "classifyImageScreen")
+    data object ClassifyImageScreen : Route(route = "classifyImageScreen")
+
+    data object TurbidityScreen : Route(route = "turbidityScreen")
 }
