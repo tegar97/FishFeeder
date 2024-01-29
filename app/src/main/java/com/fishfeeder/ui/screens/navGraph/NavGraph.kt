@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fishfeeder.R
+import com.fishfeeder.data.local.entity.ScheduleEntity
+import com.fishfeeder.data.local.util.UiState
 import com.fishfeeder.domain.model.History
 import com.fishfeeder.domain.model.Schedule
 import com.fishfeeder.ui.screens.adding.AddingScreen
@@ -45,6 +49,7 @@ fun NavGraph(
             when (currentRoute) {
                 Route.HomeScreen.route -> {
                     val items = listOf(
+                        BottomNavigationItem(R.drawable.baseline_camera_alt_24),
                         BottomNavigationItem(R.drawable.baseline_alarm_on_24),
                         BottomNavigationItem(R.drawable.baseline_water_drop_24)
                     )
@@ -53,8 +58,9 @@ fun NavGraph(
                         items = items,
                         onItemClick = {
                             when (it) {
-                                0 -> navController.navigate(Route.ListScheduleScreen.route)
-                                1 -> navController.navigate(Route.TurbidityScreen.route)
+                                0 -> navController.navigate(Route.ClassifyImageScreen.route)
+                                1 -> navController.navigate(Route.ListScheduleScreen.route)
+                                2 -> navController.navigate(Route.TurbidityScreen.route)
                             }
                         }
                     )
@@ -121,6 +127,7 @@ fun NavGraph(
         ) {
             composable(route = Route.HomeScreen.route) {
                 val viewModel: HomeViewModel = hiltViewModel()
+
                 val histories = listOf(
                     History(id = 1, title = "Makan siang", hour = "02:00"),
                     History(id = 2, title = "Makan malam", hour = "19:00"),
@@ -133,28 +140,30 @@ fun NavGraph(
             }
             composable(route = Route.AddingScheduleScreen.route) {
                 val viewModel: AddingViewModel = hiltViewModel()
-
-                AddingScreen(onEvent = viewModel::onEvent)
+                AddingScreen(onNavigateBack = {navController.navigateUp()}, onEvent = viewModel::onEvent)
             }
             composable(route = Route.ListScheduleScreen.route) {
                 val viewModel: ScheduleViewModel = hiltViewModel()
-                val schedules = listOf(
-                    Schedule(
-                        id = 1L,
-                        title = "Makan Pagi",
-                        hour = "2"
-                    ),
-                    Schedule(
-                        id = 2L,
-                        title = "Makan Siang",
-                        hour = "2"
-                    ),
-                    Schedule(
-                        id = 3L,
-                        title = "Makan Malam",
-                        hour = "2"
-                    )
-                )
+                val scheduleState by viewModel.scheduleState.collectAsState()
+                DisposableEffect(key1 = viewModel) {
+                    viewModel.fetchAllSchedule()
+                    onDispose {}
+                }
+
+
+
+                val  schedules = if (scheduleState is UiState.Success) {
+                    (scheduleState as UiState.Success<List<ScheduleEntity>>).data.map { scheduleEntity ->
+                        Schedule(
+                            id = scheduleEntity.id,
+                            title = scheduleEntity.title,
+                            hour = scheduleEntity.hour,
+                            status  = scheduleEntity.status
+                        )
+                    }
+                } else {
+                    emptyList() // or provide a default list or handle loading/error state accordingly
+                }
                 ScheduleScreen(
                     onEvent = viewModel::onEvent,
                     schedules = schedules

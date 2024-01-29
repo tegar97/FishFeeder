@@ -38,8 +38,10 @@ fun ScheduleScreen(
             schedules = schedules,
             onCheckedClick = { value, key ->
                 switches[key] = value
-                onEvent(ScheduleEvent.OnChangeSchedule(id = key.toInt(), isActive = value))
+                onEvent(ScheduleEvent.OnChangeSchedule(id = key, isActive = value))
+
             },
+
             switchState = switches
         )
     }
@@ -65,10 +67,11 @@ fun ScheduleComponentSchedules(
         LazyColumn {
             items(items = schedules, key = { it.id }) {
                 ScheduleItem(
-                    title = "Makan Pagi",
-                    checked = switchState[it.id] ?: false,
+                    title = it.title,
+                    checked = switchState[it.id] ?: it.status,
                     onCheckedClick = { value ->
                         onCheckedClick(value, it.id)
+
                     }
                 )
             }
@@ -85,18 +88,23 @@ fun ScheduleComponentSchedulesPreview() {
         Schedule(
             id = 1L,
             title = "Makan Pagi",
-            hour = "2"
+            hour = "2",
+            status = false,
         ),
         Schedule(
             id = 2L,
             title = "Makan Siang",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 3L,
             title = "Makan Malam",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
     )
     FishFeederTheme {
         ScheduleComponentSchedules(
@@ -116,18 +124,24 @@ fun ScheduleScreenPreview() {
         Schedule(
             id = 1L,
             title = "Makan Pagi",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 2L,
             title = "Makan Siang",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 3L,
             title = "Makan Malam",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
     )
 
     FishFeederTheme {

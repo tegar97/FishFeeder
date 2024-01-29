@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.fishfeeder.data.local.dao.HistoryDao
-import com.fishfeeder.data.local.dao.SchenduleDao
+import com.fishfeeder.data.local.dao.ScheduleDao
 import com.fishfeeder.data.local.database.FishFeederDB
 import com.fishfeeder.data.remote.model.ApiConstant
 import com.fishfeeder.data.remote.retrofit.MainApi
@@ -27,8 +27,8 @@ object FishFeederModule {
 
     @Singleton
     @Provides
-    fun getScheduleDao(database: FishFeederDB): SchenduleDao {
-        return database.schenduleDao()
+    fun getScheduleDao(database: FishFeederDB): ScheduleDao {
+        return database.scheduleDao()
     }
 
     @Singleton

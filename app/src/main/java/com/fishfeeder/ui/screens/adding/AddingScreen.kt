@@ -1,5 +1,6 @@
 package com.fishfeeder.ui.screens.adding
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,9 +37,13 @@ import java.util.Locale
 @Composable
 fun AddingScreen(
     modifier: Modifier = Modifier,
+    onNavigateBack : () -> Unit,
     onEvent: (AddingEvent) -> Unit
 ) {
+    val context = LocalContext.current
     val labelChooseTime = stringResource(R.string.label_adding_screen_choose_time)
+
+
 
     val state = rememberTimePickerState()
     var showTimePicker by remember { mutableStateOf(false) }
@@ -90,6 +96,9 @@ fun AddingScreen(
                         nameSchedule = titleSchedule
                     )
                 )
+                onNavigateBack()
+                Toast.makeText(context,"Schedule Berhasil ditambahkan",Toast.LENGTH_LONG).show()
+
             }
         ) {
             Text(stringResource(R.string.label_adding_screen_save))
@@ -157,6 +166,7 @@ fun AddingComponentForm(
 fun AddingScreenPreview() {
     FishFeederTheme {
         AddingScreen(
+            onNavigateBack = {},
             onEvent = {
 
             }
