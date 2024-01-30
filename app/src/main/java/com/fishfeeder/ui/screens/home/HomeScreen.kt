@@ -21,17 +21,21 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fishfeeder.R
+import com.fishfeeder.data.local.entity.ScheduleEntity
 import com.fishfeeder.domain.model.History
 import com.fishfeeder.ui.screens.home.components.HistoryCard
 import com.fishfeeder.ui.screens.home.components.HomeTurbidityAlert
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.neutral60
 import com.fishfeeder.ui.theme.spacing
+import org.jetbrains.annotations.Async.Schedule
 
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    countdownTimer : String,
+    nearSchedule : ScheduleEntity,
     histories: List<History> = emptyList(),
     onEvent: (HomeEvent) -> Unit
 ) {
@@ -44,8 +48,9 @@ fun HomeScreen(
                 .clickable {
                     onEvent(HomeEvent.CallServo)
                 },
-            taskTitle = "Makan Siang",
-            timer = "01:00:00",
+            taskTitle = nearSchedule.title,
+            taskTime = nearSchedule.hour,
+            timer = countdownTimer,
         )
         Spacer(
             modifier = modifier.height(MaterialTheme.spacing.small)
@@ -59,6 +64,7 @@ fun HomeScreen(
 fun HomeComponentTimer(
     modifier: Modifier = Modifier,
     taskTitle: String,
+    taskTime : String,
     timer: String
 ) {
     Column(
@@ -77,7 +83,7 @@ fun HomeComponentTimer(
             modifier = modifier.height(6.dp)
         )
         Text(
-            text = taskTitle,
+            text =  "$taskTitle ($taskTime)",
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight(400)
             ),
@@ -138,10 +144,13 @@ fun HomScreenPreview() {
             History(id = 2, title = "Makan malam", hour = "19:00"),
             History(id = 3, title = "Makan pagi", hour = "17:00"),
         )
+        val dummySchedule = ScheduleEntity(0,"Makang Siang","15:00",false)
         HomeScreen(
             onEvent = {
 
             },
+            countdownTimer = "01:00:00",
+            nearSchedule = dummySchedule,
             histories = histories
         )
     }
@@ -153,7 +162,8 @@ fun HomeComponentTimerPreview() {
     FishFeederTheme {
         HomeComponentTimer(
             taskTitle = "Makan Siang",
-            timer = "02:00:00"
+            timer = "02:00:00",
+            taskTime = "16:50"
         )
     }
 }

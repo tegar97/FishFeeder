@@ -30,7 +30,10 @@
         </activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
-
+        <receiver
+            android:name=".services.DailyTrigger"
+            android:enabled="true"
+            android:exported="false" />
         <service android:name=".services.MqttService"/>
 
     </application>

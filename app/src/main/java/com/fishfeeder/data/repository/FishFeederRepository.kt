@@ -1,6 +1,7 @@
 package com.fishfeeder.data.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import com.fishfeeder.data.local.dao.ScheduleDao
 import com.fishfeeder.data.local.entity.ScheduleEntity
@@ -8,6 +9,7 @@ import com.fishfeeder.data.local.util.UiState
 import com.fishfeeder.data.remote.model.FishPredictionResponse
 import com.fishfeeder.data.remote.retrofit.MlApiService
 import com.fishfeeder.ui.screens.adding.AddingEvent
+import com.fishfeeder.utils.getCurrentTime
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -26,7 +28,8 @@ class FishFeederRepository @Inject constructor(private val mlApiService : MlApiS
     suspend fun insertSchedule( timeResult : String, nameSchedule: String) {
         val scheduleData = ScheduleEntity(
             title = nameSchedule,
-            hour = timeResult
+            hour = timeResult,
+            status = true,
         )
         db.insertSchedule(scheduleData)
     }
@@ -44,7 +47,17 @@ class FishFeederRepository @Inject constructor(private val mlApiService : MlApiS
 
 
 
+    suspend fun getNearestSchedule(): Flow<ScheduleEntity> {
+        val currentTime = getCurrentTime()
+        Log.d("Current TIme",currentTime)
+        return flowOf(db.getNearestSchedule(currentTime))
+    }
 
+    fun getListSchedule() : List<ScheduleEntity> {
+
+        return db.getSchedule()
+
+    }
 
     fun predict(image : File)  : Flow<UiState<FishPredictionResponse>> = flow {
         emit(UiState.Loading)

@@ -16,6 +16,8 @@ interface ScheduleDao {
     @Insert
     suspend fun insertSchedule(exercise: ScheduleEntity)
 
+    @Query("SELECT * FROM schedule WHERE hour > :currentTime ORDER BY hour ASC LIMIT 1")
+    suspend fun getNearestSchedule(currentTime: String): ScheduleEntity
 
     @Query("UPDATE schedule SET status = :newStatus WHERE id = :scheduleId")
     suspend fun updateScheduleStatus(scheduleId: Long, newStatus: Boolean)

@@ -1,11 +1,13 @@
 package com.fishfeeder.ui.screens.navGraph
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,6 +26,8 @@ import com.fishfeeder.ui.screens.adding.AddingScreen
 import com.fishfeeder.ui.screens.adding.AddingViewModel
 import com.fishfeeder.ui.screens.classifyImage.ClassifyImageScreen
 import com.fishfeeder.ui.screens.classifyImage.ClassifyImageViewModel
+import com.fishfeeder.ui.screens.common.ProblemScreen
+import com.fishfeeder.ui.screens.common.ProblemScreenPreview
 import com.fishfeeder.ui.screens.home.HomeScreen
 import com.fishfeeder.ui.screens.home.HomeViewModel
 import com.fishfeeder.ui.screens.navigator.BottomNavigationItem
@@ -127,16 +131,58 @@ fun NavGraph(
         ) {
             composable(route = Route.HomeScreen.route) {
                 val viewModel: HomeViewModel = hiltViewModel()
+                val nearScheduleState by viewModel.scheduleState.collectAsState()
+                DisposableEffect(key1 = viewModel) {
+                    viewModel.getNearestSchedule()
+                    onDispose {
+                        viewModel.resetTimer()
+                    }
+                }
+
+                val schedule: ScheduleEntity? = when (val state = nearScheduleState) {
+                    is UiState.Success -> {
+
+                        LaunchedEffect(state.data) {
+                            viewModel.startTimer(state.data.hour)
+                        }
+
+                        state.data
+                    }
+                    is UiState.Error -> {
+
+                        null
+                    }
+                    is UiState.Loading -> {
+
+                        null
+                    }
+                    else -> null
+                }
 
                 val histories = listOf(
                     History(id = 1, title = "Makan siang", hour = "02:00"),
                     History(id = 2, title = "Makan malam", hour = "19:00"),
                     History(id = 3, title = "Makan pagi", hour = "17:00"),
                 )
-                HomeScreen(
-                    histories = histories,
-                    onEvent = viewModel::onEvent
-                )
+                val countdownTimer = viewModel.currentTimeString
+                if (schedule != null) {
+                    HomeScreen(
+                        nearSchedule = schedule,
+                        countdownTimer = countdownTimer,
+                        histories = histories,
+                        onEvent = viewModel::onEvent
+                    )
+                }else{
+                    ProblemScreen(
+                        modifier = Modifier,
+                        text = "Tidak ada jadwal yang disetting",
+                        drawable = R.drawable.calendar_empty,
+                        buttonText = "Tambah jadwal makanan",
+                        navigate = {
+                            navController.navigate( Route.AddingScheduleScreen.route)
+                        }
+                    )
+                }
             }
             composable(route = Route.AddingScheduleScreen.route) {
                 val viewModel: AddingViewModel = hiltViewModel()

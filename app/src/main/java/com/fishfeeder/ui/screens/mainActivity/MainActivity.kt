@@ -85,6 +85,9 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 connectToService()
                             }
+
+//                            NavGraph(startDestination = Route.HomeScreen.route)
+
                         } else {
                             NavGraph(startDestination = Route.HomeScreen.route)
                         }

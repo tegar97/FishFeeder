@@ -1,5 +1,7 @@
 package com.fishfeeder.utils
 
+import java.util.concurrent.Executors
+
 object Constants {
 
     const val ACTION_START_SERVICE = "ACTION_START_SERVICE"
@@ -11,4 +13,10 @@ object Constants {
     const val TOPIC_TURBIDITY_STATUS = "water/status"
     const val TOPIC_TURBIDITY_NOMINAL = "water/status1"
     const val TOPIC_SERVO_PUBLISH = "servo/publish"
+    private val SINGLE_EXECUTOR = Executors.newSingleThreadExecutor()
+
+    fun executeThread(f: () -> Unit) {
+        SINGLE_EXECUTOR.execute(f)
+    }
 }
+
