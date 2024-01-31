@@ -10,6 +10,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -20,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.fishfeeder.R
 import com.fishfeeder.data.local.entity.ScheduleEntity
 import com.fishfeeder.data.local.util.UiState
+import com.fishfeeder.domain.MqttResult
 import com.fishfeeder.domain.model.History
 import com.fishfeeder.domain.model.Schedule
 import com.fishfeeder.ui.screens.adding.AddingScreen
@@ -27,7 +31,6 @@ import com.fishfeeder.ui.screens.adding.AddingViewModel
 import com.fishfeeder.ui.screens.classifyImage.ClassifyImageScreen
 import com.fishfeeder.ui.screens.classifyImage.ClassifyImageViewModel
 import com.fishfeeder.ui.screens.common.ProblemScreen
-import com.fishfeeder.ui.screens.common.ProblemScreenPreview
 import com.fishfeeder.ui.screens.home.HomeScreen
 import com.fishfeeder.ui.screens.home.HomeViewModel
 import com.fishfeeder.ui.screens.navigator.BottomNavigationItem
@@ -36,6 +39,8 @@ import com.fishfeeder.ui.screens.schedule.ScheduleScreen
 import com.fishfeeder.ui.screens.schedule.ScheduleViewModel
 import com.fishfeeder.ui.screens.turbidity.TurbidityScreen
 import com.fishfeeder.ui.screens.turbidity.TurbidityViewModel
+import com.fishfeeder.utils.Constants.TOPIC_TURBIDITY_NOMINAL
+import com.fishfeeder.utils.Constants.TOPIC_TURBIDITY_STATUS
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -69,6 +74,7 @@ fun NavGraph(
                         }
                     )
                 }
+
                 Route.ListScheduleScreen.route -> {
                     val items = listOf(
                         BottomNavigationItem(R.drawable.baseline_add_24)
@@ -148,16 +154,20 @@ fun NavGraph(
 
                         state.data
                     }
+
                     is UiState.Error -> {
 
                         null
                     }
+
                     is UiState.Loading -> {
 
                         null
                     }
-                    else -> null
                 }
+                viewModel.turbidityObserve()
+                val turbidityStatus =
+                    viewModel.turbidityStatus.collectAsState(MqttResult.ConnectionLost(null)).value
 
                 val histories = listOf(
                     History(id = 1, title = "Makan siang", hour = "02:00"),
@@ -165,28 +175,70 @@ fun NavGraph(
                     History(id = 3, title = "Makan pagi", hour = "17:00"),
                 )
                 val countdownTimer = viewModel.currentTimeString
+                var messageNtu by remember { mutableStateOf("") }
+                var messageStatus by remember { mutableStateOf(false) }
                 if (schedule != null) {
+                    when (turbidityStatus) {
+                        is MqttResult.ConnectionLost -> {
+                            Log.d("TAG", "connection lost ${turbidityStatus.error ?: "unknown"}")
+                        }
+
+                        MqttResult.DeliveryComplete -> {
+                            Log.d("TAG", "deliver ")
+                        }
+
+                        is MqttResult.MessageArrived -> {
+                            when (turbidityStatus.topic) {
+                                TOPIC_TURBIDITY_STATUS -> {
+                                    turbidityStatus.massage?.let { result ->
+                                        val currentStatus = result.toString()
+                                        when(currentStatus) {
+                                            "Keruh" -> messageStatus = false
+                                            "Jernih" -> messageStatus = true
+                                            else -> Log.d("TAG", "Unknown Message")
+                                        }
+                                    }
+                                }
+
+                                TOPIC_TURBIDITY_NOMINAL -> {
+                                    turbidityStatus.massage?.let { result ->
+                                        messageNtu = result.toString()
+                                    }
+                                }
+
+                                else -> {
+                                    Log.d("TAG", "Unknown Message")
+                                }
+                            }
+                        }
+                    }
                     HomeScreen(
+                        modifier = modifier.padding(innerPadding),
                         nearSchedule = schedule,
                         countdownTimer = countdownTimer,
                         histories = histories,
+                        isGood = messageStatus,
+                        ntuValue = messageNtu,
                         onEvent = viewModel::onEvent
                     )
-                }else{
+                } else {
                     ProblemScreen(
-                        modifier = Modifier,
+                        modifier = modifier.padding(innerPadding),
                         text = "Tidak ada jadwal yang disetting",
                         drawable = R.drawable.calendar_empty,
                         buttonText = "Tambah jadwal makanan",
                         navigate = {
-                            navController.navigate( Route.AddingScheduleScreen.route)
+                            navController.navigate(Route.AddingScheduleScreen.route)
                         }
                     )
                 }
             }
             composable(route = Route.AddingScheduleScreen.route) {
                 val viewModel: AddingViewModel = hiltViewModel()
-                AddingScreen(onNavigateBack = {navController.navigateUp()}, onEvent = viewModel::onEvent)
+                AddingScreen(
+                    onNavigateBack = { navController.navigateUp() },
+                    onEvent = viewModel::onEvent
+                )
             }
             composable(route = Route.ListScheduleScreen.route) {
                 val viewModel: ScheduleViewModel = hiltViewModel()
@@ -197,14 +249,13 @@ fun NavGraph(
                 }
 
 
-
-                val  schedules = if (scheduleState is UiState.Success) {
+                val schedules = if (scheduleState is UiState.Success) {
                     (scheduleState as UiState.Success<List<ScheduleEntity>>).data.map { scheduleEntity ->
                         Schedule(
                             id = scheduleEntity.id,
                             title = scheduleEntity.title,
                             hour = scheduleEntity.hour,
-                            status  = scheduleEntity.status
+                            status = scheduleEntity.status
                         )
                     }
                 } else {
@@ -215,7 +266,7 @@ fun NavGraph(
                     schedules = schedules
                 )
             }
-            composable(route = Route.ClassifyImageScreen.route){
+            composable(route = Route.ClassifyImageScreen.route) {
                 val viewModel: ClassifyImageViewModel = hiltViewModel()
                 ClassifyImageScreen()
             }

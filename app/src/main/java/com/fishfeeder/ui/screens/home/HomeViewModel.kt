@@ -13,11 +13,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.fishfeeder.data.local.entity.ScheduleEntity
 import com.fishfeeder.data.local.util.UiState
 import com.fishfeeder.data.repository.FishFeederRepository
+import com.fishfeeder.domain.MqttResult
 import com.fishfeeder.services.MqttService
 import com.fishfeeder.utils.Constants
 import com.fishfeeder.utils.convertTimeToMillis
@@ -26,14 +27,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
-class HomeViewModel @Inject constructor(application : Application , private val fishFeederRepository: FishFeederRepository) : AndroidViewModel(application) {
+class HomeViewModel @Inject constructor(
+    application: Application,
+    private val fishFeederRepository: FishFeederRepository
+) : AndroidViewModel(application) {
     private var timer: CountDownTimer? = null
     private val initialTime = MutableLiveData<Long>()
     private val currentTime = MutableLiveData<Long>()
@@ -46,7 +49,6 @@ class HomeViewModel @Inject constructor(application : Application , private val 
     val onCounting: StateFlow<Boolean>
         get() = _onCounting
 
-
     private val _scheduleState: MutableStateFlow<UiState<ScheduleEntity>> =
         MutableStateFlow(UiState.Loading)
     val scheduleState: StateFlow<UiState<ScheduleEntity>>
@@ -58,6 +60,10 @@ class HomeViewModel @Inject constructor(application : Application , private val 
 
     private val applicationContext = getApplication<Application>().applicationContext
 
+    private val _turbidityStatus: MutableStateFlow<MqttResult> =
+        MutableStateFlow(MqttResult.ConnectionLost(null))
+    val turbidityStatus: StateFlow<MqttResult>
+        get() = _turbidityStatus
 
     fun onEvent(event: HomeEvent) {
         when (event) {
@@ -94,28 +100,28 @@ class HomeViewModel @Inject constructor(application : Application , private val 
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun startTimer(scheduledTime : String) {
+    fun startTimer(scheduledTime: String) {
 
-           timer?.start()
-           val currentTimeMillis = System.currentTimeMillis()
-           val scheduleTimeMillis = convertTimeToMillis(scheduledTime)
-           val initialTimeMillis = scheduleTimeMillis - currentTimeMillis
-           initialTime.value = initialTimeMillis
-           currentTime.value = initialTimeMillis
-           timer = object : CountDownTimer(initialTimeMillis, 1000) {
+        timer?.start()
+        val currentTimeMillis = System.currentTimeMillis()
+        val scheduleTimeMillis = convertTimeToMillis(scheduledTime)
+        val initialTimeMillis = scheduleTimeMillis - currentTimeMillis
+        initialTime.value = initialTimeMillis
+        currentTime.value = initialTimeMillis
+        timer = object : CountDownTimer(initialTimeMillis, 1000) {
 
-               override fun onTick(millisUntilFinished: Long) {
-                   currentTime.value = millisUntilFinished
-                   updateTimeString(millisUntilFinished)
-                   _onCounting.value = true
-               }
+            override fun onTick(millisUntilFinished: Long) {
+                currentTime.value = millisUntilFinished
+                updateTimeString(millisUntilFinished)
+                _onCounting.value = true
+            }
 
-               override fun onFinish() {
-                   resetTimer()
+            override fun onFinish() {
+                resetTimer()
 
 
-               }
-           }
+            }
+        }
 
 
     }
@@ -127,6 +133,18 @@ class HomeViewModel @Inject constructor(application : Application , private val 
         _onCounting.value = false
 
 
+    }
+
+    fun turbidityObserve() {
+        viewModelScope.launch {
+            MqttService.serviceResult.asFlow()
+                .catch {
+                    _turbidityStatus.value = MqttResult.ConnectionLost(it)
+                }
+                .collect {
+                _turbidityStatus.value = it
+            }
+        }
     }
 
     override fun onCleared() {

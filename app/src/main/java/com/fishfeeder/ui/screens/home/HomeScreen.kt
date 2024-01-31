@@ -37,6 +37,8 @@ fun HomeScreen(
     countdownTimer : String,
     nearSchedule : ScheduleEntity,
     histories: List<History> = emptyList(),
+    isGood: Boolean?,
+    ntuValue: String?,
     onEvent: (HomeEvent) -> Unit
 ) {
     Column(
@@ -55,7 +57,7 @@ fun HomeScreen(
         Spacer(
             modifier = modifier.height(MaterialTheme.spacing.small)
         )
-        HomeTurbidityAlert(isGood = false, ntuValue = "999")
+        HomeTurbidityAlert(isGood = isGood?:false, ntuValue = ntuValue?:"")
         HomeComponentHistories(modifier = modifier, histories = histories)
     }
 }
@@ -151,7 +153,9 @@ fun HomScreenPreview() {
             },
             countdownTimer = "01:00:00",
             nearSchedule = dummySchedule,
-            histories = histories
+            histories = histories,
+            isGood = true,
+            ntuValue = "999"
         )
     }
 }

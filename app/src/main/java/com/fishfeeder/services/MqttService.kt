@@ -37,7 +37,7 @@ class MqttService : LifecycleService(), IMqttActionListener, MqttCallback {
     }
 
     override fun onCreate() {
-        serviceResult.postValue(MqttResult.Loading)
+        serviceResult.postValue(MqttResult.ConnectionLost(null))
         serviceStatus.postValue(MqttStatus.Disconnected)
         mqttClient = MqttAndroidClient(this, BROKER_URL, MqttAsyncClient.generateClientId())
         mqttClient.setCallback(this)
@@ -85,7 +85,7 @@ class MqttService : LifecycleService(), IMqttActionListener, MqttCallback {
         val options = MqttConnectOptions()
         options.userName = username
         options.password = password.toCharArray()
-//        options.isAutomaticReconnect = true
+        options.isAutomaticReconnect = true
         try {
             mqttClient.connect(options, this)
             Log.d("Service", "connect")
@@ -101,7 +101,7 @@ class MqttService : LifecycleService(), IMqttActionListener, MqttCallback {
     ) {
         try {
             mqttClient.subscribe(topic, qos, null, this)
-            Log.d("Service", "subscribe")
+            Log.d("TAG", "subscribe")
         } catch (e: MqttException) {
             serviceStatus.postValue(MqttStatus.Error(e))
             e.printStackTrace()
@@ -141,6 +141,7 @@ class MqttService : LifecycleService(), IMqttActionListener, MqttCallback {
         try {
             mqttClient.disconnect()
             serviceStatus.postValue(MqttStatus.Disconnected)
+            serviceResult.postValue(MqttResult.ConnectionLost(null))
         } catch (e: MqttException) {
             serviceStatus.postValue(MqttStatus.Error(e))
             e.printStackTrace()
@@ -162,13 +163,11 @@ class MqttService : LifecycleService(), IMqttActionListener, MqttCallback {
     }
 
     override fun connectionLost(cause: Throwable?) {
-        disconnect()
-        serviceResult.postValue(MqttResult.ConnectionLost(cause!!))
-        serviceStatus.postValue(MqttStatus.Disconnected)
+        serviceResult.postValue(MqttResult.ConnectionLost(cause))
     }
 
     override fun messageArrived(topic: String?, message: MqttMessage?) {
-        serviceResult.postValue(MqttResult.MessageArrived(topic!!, message!!))
+        serviceResult.postValue(MqttResult.MessageArrived(topic, message))
     }
 
     override fun deliveryComplete(token: IMqttDeliveryToken?) {

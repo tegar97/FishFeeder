@@ -79,7 +79,7 @@ fun ProblemScreenPreview() {
             ProblemScreen(
                 modifier = Modifier,
                 text = "Tidak ada jadwal yang disetting",
-                drawable = R.drawable.calendar_empty,
+                drawable = R.drawable.server_problem,
                 buttonText = "Tambah jadwal makanan"
             ) {
 
