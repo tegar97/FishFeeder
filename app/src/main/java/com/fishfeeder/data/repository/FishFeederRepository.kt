@@ -79,7 +79,7 @@ class FishFeederRepository @Inject constructor(private val mlApiService : MlApiS
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, FishPredictionResponse::class.java)
 
-            errorResponse.status?.message?.let { UiState.Error(it) }?.let { emit(it) }
+//            errorResponses?.message?.let { UiState.Error(it) }?.let { emit(it) }
         }
     }
 }
