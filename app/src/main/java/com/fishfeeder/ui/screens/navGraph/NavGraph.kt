@@ -124,6 +124,7 @@ fun NavGraph(
                         isCenteredTitle = true,
                         onBackClick = {
                             navController.navigateUp()
+
                         }
                     )
                 }
