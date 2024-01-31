@@ -38,15 +38,11 @@ class DailyTrigger : BroadcastReceiver() {
 
     private fun checkAndTriggerAction(context: Context?, scheduleList: List<ScheduleEntity>) {
         val currentTimeMillis = System.currentTimeMillis()
-
         for (schedule in scheduleList) {
             val scheduledTimeMillis = convertTimeToMillis(schedule.hour)
-
             if (currentTimeMillis >= scheduledTimeMillis && schedule.status) {
                 // Perform the action, e.g., send data to MQTT
                 sendToMqttService(schedule)
-
-
             }
         }
     }

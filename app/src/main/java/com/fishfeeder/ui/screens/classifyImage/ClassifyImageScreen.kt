@@ -167,7 +167,20 @@ fun ClassifyImageScreen(
                         }
 
                         is UiState.Success -> {
-                            uiState.data.name?.let { Text(text = it) }
+
+                            Column(
+                               modifier = Modifier.padding(16.dp)
+                            ){
+                                Text(
+                                    "Nama Ikan :${
+                                        uiState.data.prediction
+                                    }"
+                                )
+                                Text(
+                                    "Akurasi Prediksi: ${ (uiState.data.confidence * 100).toInt() }%",
+                                )
+
+                            }
 
 
                         }
