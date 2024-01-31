@@ -23,11 +23,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -37,6 +44,9 @@ import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.neutral10
 import com.fishfeeder.ui.theme.neutral80
 import com.fishfeeder.ui.theme.spacing
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,21 +69,24 @@ fun TimePickerDialog(
             value = timeResult,
             onValueChange = {},
             label = {},
+            trailingIcon = {
+                Button(
+                    modifier = modifier
+                        .weight(2f),
+                    onClick = onTimePickerClick,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_alarm_on_24),
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = modifier.width(MaterialTheme.spacing.small))
+            },
             singleLine = true,
             readOnly = true
         )
-        Spacer(modifier = modifier.width(MaterialTheme.spacing.small))
-        Button(
-            modifier = modifier
-                .weight(2f),
-            onClick = onTimePickerClick,
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_alarm_on_24),
-                contentDescription = null
-            )
-        }
+
         if (showTimePicker) {
             TimePickerDialog(
                 onCancel = onTimePickerClick,
@@ -144,8 +157,40 @@ fun TimePickerDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TimePickerTextFieldPreview() {
-
+    val labelChooseTime = stringResource(R.string.label_adding_screen_choose_time)
+    val state = rememberTimePickerState()
+    var showTimePicker by remember { mutableStateOf(false) }
+    var isChooses by remember { mutableStateOf(false) }
+    val timeResult by remember {
+        derivedStateOf {
+            if (isChooses) {
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.HOUR_OF_DAY, state.hour)
+                cal.set(Calendar.MINUTE, state.minute)
+                cal.isLenient = false
+                val simpleDateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                simpleDateFormat.format(cal.time)
+            } else {
+                labelChooseTime
+            }
+        }
+    }
+    Surface {
+        TimePickerDialog(
+            timeResult = timeResult,
+            stateTime = state,
+            showTimePicker = showTimePicker,
+            onTimePickerClick = {
+                showTimePicker = !showTimePicker
+            },
+            onTimePickerChoose = {
+                isChooses = true
+                showTimePicker = !showTimePicker
+            }
+        )
+    }
 }

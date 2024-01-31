@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">FishFeeder</string>
+    <string name="title_screen_turbidity">Tambah Batas Keruh Air</string>
+    <string name="title_screen_schedule">List Jadwal Makan Ikan</string>
+    <string name="header_screen_home_next_schedule">Makan Selanjutnya</string>
+    <string name="label_adding_screen_choose_time">Pilih Waktu</string>
+    <string name="label_adding_screen_save">Simpan</string>
+    <string name="title_screen_adding">Tambah Jadwal Baru</string>
+    <string name="label_sceen_adding_name_schedule">Nama Jadwal</string>
+    <string name="placeholder_name_schedule">Contoh Makan Pagi</string>
+    <string name="label_screen_adding_time_schedule">Waktu Makan</string>
+    <string name="label_turbidity_screen_ntu_value">Nilai NTU</string>
 </resources>

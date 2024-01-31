@@ -11,7 +11,6 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-
 val neutral10 = Color(0XFFFFFFFF)
 val neutral20 = Color(0XFFECECEC)
 val neutral30 = Color(0XFFCCCCCC)
@@ -22,5 +21,7 @@ val neutral70 = Color(0XFF2B2B2B)
 val neutral80 = Color(0XFF1D1D1D)
 val neutral90 = Color(0XFF000000)
 
-val green10 = Color(0xFF4CC7A1)
+val green10 = Color(0xFF2AC796)
+val green40 = Color(0xFFE4F0ED)
 val red60 = Color(0xFFA22231)
+val red90 = Color(0xFFF6DCDC)

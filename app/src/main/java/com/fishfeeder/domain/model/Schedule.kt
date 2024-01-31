@@ -8,4 +8,5 @@ data class Schedule(
     val id: Long,
     val title: String,
     val hour: String,
+    val status : Boolean,
 ) : Parcelable

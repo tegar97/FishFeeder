@@ -1,5 +1,6 @@
 package com.fishfeeder.ui.screens.common
 
+import android.os.Build.DEVICE
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -18,13 +19,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.fishfeeder.R
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.spacing
 
 @Composable
-fun EmptyScreen(
+fun ProblemScreen(
     modifier: Modifier = Modifier,
     text: String,
     @DrawableRes drawable: Int,
@@ -33,14 +35,15 @@ fun EmptyScreen(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth(0.7f),
+            .fillMaxSize(0.8f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            modifier = modifier
-                .fillMaxWidth(),
+            modifier = modifier,
             painter = painterResource(id = drawable),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Fit
         )
         Spacer(modifier = modifier.height(MaterialTheme.spacing.small))
         Text(
@@ -64,19 +67,19 @@ fun EmptyScreen(
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.DEFAULT)
 @Composable
-fun EmptyScreenPreview() {
+fun ProblemScreenPreview() {
     FishFeederTheme {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            EmptyScreen(
+            ProblemScreen(
                 modifier = Modifier,
                 text = "Tidak ada jadwal yang disetting",
-                drawable = R.drawable.calendar_empty,
+                drawable = R.drawable.server_problem,
                 buttonText = "Tambah jadwal makanan"
             ) {
 

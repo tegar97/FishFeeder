@@ -12,12 +12,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.fishfeeder.R
 import com.fishfeeder.domain.model.Schedule
-import com.fishfeeder.ui.screens.navigator.component.BottomNavigationItem
-import com.fishfeeder.ui.screens.navigator.component.FishFeederTopBar
 import com.fishfeeder.ui.screens.schedule.component.ScheduleItem
 import com.fishfeeder.ui.theme.FishFeederTheme
 import com.fishfeeder.ui.theme.spacing
@@ -25,49 +24,24 @@ import com.fishfeeder.ui.theme.spacing
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    itemsNavigation: List<BottomNavigationItem>,
-    onNavigationItemClick: (Int) -> Unit,
-    onBackClick: () -> Unit
+    schedules: List<Schedule> = emptyList(),
+    onEvent: (ScheduleEvent) -> Unit
 ) {
-
-    val schedules = listOf(
-        Schedule(
-            id = 1L,
-            title = "Makan Pagi",
-            hour = "2"
-        ),
-        Schedule(
-            id = 2L,
-            title = "Makan Siang",
-            hour = "2"
-        ),
-        Schedule(
-            id = 3L,
-            title = "Makan Malam",
-            hour = "2"
-        ),
-    )
-
     val switches = remember { mutableStateMapOf<Long, Boolean>() }
 
     Column(
         modifier = modifier
     ) {
-        FishFeederTopBar(
-            title = "Jadwal Makan",
-            items = itemsNavigation,
-            isCenteredTitle = true,
-            hasBackButton = true,
-            onItemClick = onNavigationItemClick,
-            onBackClick = onBackClick
-        )
         ScheduleComponentSchedules(
             modifier = modifier
                 .padding(MaterialTheme.spacing.small),
             schedules = schedules,
             onCheckedClick = { value, key ->
                 switches[key] = value
+                onEvent(ScheduleEvent.OnChangeSchedule(id = key, isActive = value))
+
             },
+
             switchState = switches
         )
     }
@@ -85,7 +59,7 @@ fun ScheduleComponentSchedules(
             .fillMaxSize()
     ) {
         Text(
-            text = "List Jadwal Makan Ikan",
+            text = stringResource(R.string.title_screen_schedule),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight(600)
             )
@@ -93,10 +67,11 @@ fun ScheduleComponentSchedules(
         LazyColumn {
             items(items = schedules, key = { it.id }) {
                 ScheduleItem(
-                    title = "Makan Pagi",
-                    checked = switchState[it.id] ?: false,
+                    title = it.title,
+                    checked = switchState[it.id] ?: it.status,
                     onCheckedClick = { value ->
                         onCheckedClick(value, it.id)
+
                     }
                 )
             }
@@ -113,18 +88,23 @@ fun ScheduleComponentSchedulesPreview() {
         Schedule(
             id = 1L,
             title = "Makan Pagi",
-            hour = "2"
+            hour = "2",
+            status = false,
         ),
         Schedule(
             id = 2L,
             title = "Makan Siang",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 3L,
             title = "Makan Malam",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
     )
     FishFeederTheme {
         ScheduleComponentSchedules(
@@ -140,34 +120,36 @@ fun ScheduleComponentSchedulesPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ScheduleScreenPreview() {
-    val items = listOf(
-        BottomNavigationItem(R.drawable.baseline_add_24)
-    )
-
     val schedules = listOf(
         Schedule(
             id = 1L,
             title = "Makan Pagi",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 2L,
             title = "Makan Siang",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
         Schedule(
             id = 3L,
             title = "Makan Malam",
-            hour = "2"
-        ),
+            hour = "2",
+            status = false,
+
+            ),
     )
 
     FishFeederTheme {
         ScheduleScreen(
+            schedules = schedules,
+            onEvent = {
 
-            itemsNavigation = items,
-            onNavigationItemClick = {},
-            onBackClick = {}
+            }
         )
     }
 }

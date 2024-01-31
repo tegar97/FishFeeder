@@ -1,42 +1,18 @@
 package com.fishfeeder.ui.screens.classifyImage
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.fishfeeder.data.local.util.UiState
-import com.fishfeeder.ui.theme.neutral10
-import com.fishfeeder.ui.theme.neutral80
-import com.fishfeeder.utils.reduceFileImage
-import com.fishfeeder.utils.uriToFile
-import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
-import android.graphics.Paint.Align
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Space
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.camera.core.CameraX
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -49,20 +25,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -87,16 +61,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fishfeeder.data.local.util.UiState
 import com.fishfeeder.ui.theme.LightGreen
+import com.fishfeeder.ui.theme.neutral10
+import com.fishfeeder.ui.theme.neutral80
+import com.fishfeeder.utils.reduceFileImage
 import com.fishfeeder.utils.saveBitmapToFile
+import com.fishfeeder.utils.uriToFile
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassifyImageScreen(    onBackClick: () -> Unit,    viewModel: ClassifyImageViewModel  = hiltViewModel()
-){
+fun ClassifyImageScreen(
+    viewModel: ClassifyImageViewModel = hiltViewModel()
+) {
     var currentProgress by remember { mutableStateOf(0f) }
 
     val scope = rememberCoroutineScope()
@@ -112,7 +92,7 @@ fun ClassifyImageScreen(    onBackClick: () -> Unit,    viewModel: ClassifyImage
     ) { uri: Uri? ->
         imageUri = uri
 
-        if(uri != null) {
+        if (uri != null) {
             val imageFile = uriToFile(uri, context).reduceFileImage()
             viewModel.predictImage(imageFile)
             scope.launch {
@@ -142,7 +122,7 @@ fun ClassifyImageScreen(    onBackClick: () -> Unit,    viewModel: ClassifyImage
             sheetContent = {
 
                 viewModel.predict.collectAsState(initial = UiState.Loading).value.let { uiState ->
-                    when(uiState) {
+                    when (uiState) {
                         is UiState.Loading -> {
                             scope.launch {
                                 loadProgress { progress ->
@@ -151,41 +131,47 @@ fun ClassifyImageScreen(    onBackClick: () -> Unit,    viewModel: ClassifyImage
 
                             }
                             Column(
-                                horizontalAlignment =  Alignment.CenterHorizontally,
+                                horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.padding(16.dp)
 
-                            ){
-                                Text("Loading ...." , style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontSize = 18.sp,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold
-                                ))
+                            ) {
+                                Text(
+                                    "Loading ....", style = MaterialTheme.typography.bodyLarge.copy(
+                                        fontSize = 18.sp,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
 
                                 Spacer(modifier = Modifier.height(12.dp))
 
 
-                                Text("Fun fact: Laughter is a workout! A hearty laugh engages core muscles and boosts endorphin levels," , style = MaterialTheme.typography.bodyMedium.copy(
-                                    textAlign = TextAlign.Center
-                                ))
+                                Text(
+                                    "Fun fact: Laughter is a workout! A hearty laugh engages core muscles and boosts endorphin levels,",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        textAlign = TextAlign.Center
+                                    )
+                                )
                                 Spacer(modifier = Modifier.height(12.dp))
 
                                 LinearProgressIndicator(
-                                    progress =  currentProgress ,
-                                    trackColor =LightGreen ,
+                                    progress = currentProgress,
+                                    trackColor = LightGreen,
                                     color = neutral10,
 
-                                    modifier = Modifier.fillMaxWidth(),)
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
                             }
 
                         }
+
                         is UiState.Success -> {
                             uiState.data.name?.let { Text(text = it) }
 
 
-
-
                         }
+
                         is UiState.Error -> {
 
                             Text("Error")

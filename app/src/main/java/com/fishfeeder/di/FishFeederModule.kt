@@ -1,9 +1,10 @@
 package com.fishfeeder.di
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.fishfeeder.data.local.dao.HistoryDao
-import com.fishfeeder.data.local.dao.SchenduleDao
+import com.fishfeeder.data.local.dao.ScheduleDao
 import com.fishfeeder.data.local.database.FishFeederDB
 import com.fishfeeder.data.remote.model.ApiConstant
 import com.fishfeeder.data.remote.retrofit.MainApi
@@ -24,11 +25,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object FishFeederModule {
 
-
     @Singleton
     @Provides
-    fun getScheduleDao(database: FishFeederDB): SchenduleDao {
-        return database.schenduleDao()
+    fun getScheduleDao(database: FishFeederDB): ScheduleDao {
+        return database.scheduleDao()
     }
 
     @Singleton
@@ -97,4 +97,8 @@ object FishFeederModule {
     @Singleton
     fun mlApiService(@MlApi retrofit : Retrofit) : MlApiService = retrofit.create(MlApiService::class.java)
 
+    @Provides
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
 }

@@ -24,4 +24,8 @@ data class  ScheduleEntity (
     @ColumnInfo(name = "hour")
     val hour: String,
 
+
+    @ColumnInfo(name = "status")
+    val status: Boolean = false,
+
 )
